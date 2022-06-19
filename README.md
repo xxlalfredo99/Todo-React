@@ -3,7 +3,7 @@
 Below we will give a brief introduction to React by rewriting the todo app
 example in React. Note for simplicity we are using local storage to store
 todo items (this app is equivalent to the 
-[todo app example from lecture 2](https://github.com/ThierrySans/CSCC09/tree/master/lectures/02/src/todo)).
+[todo app example from lecture 2](https://github.com/choyiny/cscc09.com/tree/main/lectures/02-javascript/todo)).
 
 
 Firstly, React is frontend framework for JavaScript (although some people
