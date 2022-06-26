@@ -449,6 +449,13 @@ of them in the DOM. One important thing to note is that when rendering lists
 we must provide a unique `key` attribute for each item. This helps React keep
 track of which item is which.
 
+**Note**: When assigning the value for `key`, using the index of the item (`_idx`)
+is not recommended, and another unique property, such as the item's id (if possible)
+should be used instead. The index should only be used when there are no other options.
+Look at the [React docs](https://reactjs.org/docs/lists-and-keys.html#keys), and the 
+[ESLint rule](https://github.com/jsx-eslint/eslint-plugin-react/blob/master/docs/rules/no-array-index-key.md)
+for more information.
+
 ```jsx
 // components/Items.js
 import "./Items.css";
@@ -458,8 +465,8 @@ export function Items(props) {
 
   return (
     <div className="Items">
-      {items.map((item, idx) => (
-        <div key={`item-idx-${idx}`}>{item}</div>
+      {items.map((item, _idx) => (
+        <div key={item.id}>{item.content}</div>
       ))}
     </div>
   );
@@ -481,8 +488,8 @@ export function Items(props) {
       {items.length === 0 ? (
         <h2>No items added yet, try adding some.</h2>
       ) : (
-        items.map((item, idx) => (
-          <div key={`item-idx-${idx}`}>{item}</div>
+        items.map((item) => (
+          <div key={item.id}>{item.content}</div>
         ))
       )}
     </div>
@@ -528,7 +535,7 @@ export function Items(props) {
       ) : (
         items.map((item, idx) => (
           <Item
-            key={`item-idx-${idx}`}
+            key={item.id}
             item={item}
             deleteThisItem={() => deleteItem(idx)}
           />
