@@ -2,8 +2,7 @@ import { useRef } from "react";
 import "./AddItemForm.css";
 
 export function AddItemForm(props) {
-  // Tip: this syntax is called "object destructing"
-  const { createItem } = props;
+    const { addItem } = props;
 
   // We need to have direct HTML access to the input for the item content
   // In vanilla JavaScript, we'd do this by using a query selector on the
@@ -16,9 +15,9 @@ export function AddItemForm(props) {
     e.preventDefault();
 
     const content = itemContentRef.current.value;
-    createItem(content);
-
-    e.target.reset();
+    addItem(content).then(function(){
+         e.target.reset();
+    });
   };
 
   return (

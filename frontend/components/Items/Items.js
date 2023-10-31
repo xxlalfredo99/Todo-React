@@ -1,5 +1,5 @@
 import "./Items.css";
-import { Item } from "./Item";
+import { Item } from "../Item/Item";
 
 export function Items(props) {
   const { items, deleteItem } = props;
@@ -11,9 +11,9 @@ export function Items(props) {
       {items.length === 0 ? (
         <h2>No items added yet, try adding some.</h2>
       ) : (
-        items.map((item, idx) => (
+        items.map((item) => (
           <Item
-            key={`item-idx-${idx}`}
+            key={`item-${item._id}`}
             item={item}
             // The deleteItem received in props takes in the index of the item
             // to delete as an argument. However, the deleteItem expected in
@@ -22,7 +22,7 @@ export function Items(props) {
             // do a little trick here where the deleteItem passed into Item is
             // an anonymous function that is setup beforehand to call
             // the version deleteItem that expects the item index
-            deleteThisItem={() => deleteItem(idx)}
+            deleteItem={deleteItem}
           />
         ))
       )}

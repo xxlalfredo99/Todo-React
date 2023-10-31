@@ -1,13 +1,10 @@
 # Todo React App
 
 Below we will give a brief introduction to React by rewriting the todo app
-example in React. Note for simplicity we are using local storage to store
-todo items (this app is equivalent to the 
-[todo app example from lecture 2](https://github.com/choyiny/cscc09.com/tree/main/lectures/02-javascript/todo)).
+example in React. Note for simplicity we are using a simple backend to store
+todo items as seen in lecture 4. 
 
-
-Firstly, React is frontend framework for JavaScript (although some people
-argue that it's a library instead). React allows us to easily split 
+Firstly, React is frontend framework for JavaScript. React allows us to easily split 
 code into units of abstraction called components. The real power behind
 components is that they can be composed of smaller components to create
 larger and more complex systems. React also brings to the table a powerful
@@ -53,9 +50,7 @@ which is why this tutorial will only be using them. However, it is still
 important to know that class based components exist because plenty of examples
 and documentation (including parts of the official React documentation) still
 use them. Everything a class component can do can also be done with functional
-components and hooks (barring a few very very very edge cases).
-
-## The Component Lifecycle
+components and hooks.
 
 Each React component has a lifecycle that it follows. When the component
 is initially added in, it will be mounted. After mounting is completed
@@ -69,80 +64,69 @@ the component will be unmounted along will all its children components.
 
 ![React Component Lifecycle](./media/component-lifecycle.png)
 
-## TODO App Component Structure
+## Using the React framework Next.js
 
-Before we begin writing any code, it is a good idea to have an understanding
-of how we want to split our app's logic up into different components. By
-convention, we often define our root component as `App`. This component acts
-as the base of our app and will manage the state of our application and 
-render the sub-components of the app.
+There are several React framework that you use. One of the most popular so far was called _Create React App_. However, this framework has been deprecated by the React developers. 
 
-The todo app itself has two main features: creating a new todo item
-and displaying the existing todo items. As such it logically makes sense that
-these two parts should be defined into two separate components. Let's call these
-two components `AddItemForm` and `Items`. `Items` will be responsible for
-displaying *all* our current todo items. However, it also makes sense that each
-item itself should be represented as a component. We will call this component
-`Item`. As such, `Items` itself will render one `Item` per each item in our
-todo list. On the other hand `AddItemForm` will manage the input for creating
-a new todo item.
+In this tutorial, we are going to use the [Next.js React framework](https://nextjs.org/). However, Next.js allows more than just writing react frontend. It has also some backend features that we are not going to use here. Because Next.js mixes backend and frontend features, it has a specific way to render React content. For the sake of simplicity, we are not going to touch any of the Next.js backend features and we will always render React content on the client side (see [Client Side Rendering](https://nextjs.org/docs/pages/building-your-application/rendering/client-side-rendering))
 
-Visually our component tree will look as follows:
+So before writing any code, you should get familiar with the basic principles of Next.js. We recommend you to look at: 
 
-```
-App
-|-- AddItemForm
-|-- Items
-    | -- Item
-    | -- Item
-    [...]
-    | -- Item
-```
+- [Proiject Structure](https://nextjs.org/docs/getting-started/project-structure)
+- [Routing](https://nextjs.org/docs/app/building-your-application/routing)
+- [Client Rendering](https://nextjs.org/docs/app/building-your-application/rendering/client-components)
 
-## The App
+## The Landing Page
 
-So let's start by defining our root component `App`:
+So let's start by defining our landing page `app/pages.js`:
 
 ```jsx
-// src/App.js
-import "./App.css";
+'use client'
 
-function App() {
-  return (
-    <div className="App">
-      Hello There
-    </div>
-  );
+import styles from './page.module.css'
+
+export default function Home() {
+
+    return (
+        <div className="{styles.hello}">
+          Hello World!
+        </div>
+    );
 }
+```
 
-export default App;
+and `app/pages.js`:
+
+```css
+.hello {
+    color: red;
+}
 ```
 
 Note: recall that anything we write here is in JavaScript which means that
 `class` is a reserved keyword. As such, to define a class on an element we
 use `className` instead when using React.
 
-Currently, `App` simply displays the text "Hello There". However, we want it to
+Currently, our landing page simply displays the text "Hello There". However, we want it to
 allow us to add new items and display the current items. 
 
 Our first instinct would be to define a variable that keeps track of items
-within the `App` component like so:
+within the landing page component like so:
 
 ```jsx
-// src/App.js
-import "./App.css";
+'use client'
 
-function App() {
-  let items = [];
+import styles from './page.module.css'
 
-  return (
-    <div className="App">
-      Hello There
-    </div>
-  );
+export default function Home() {
+    const items = [];
+    
+    return (
+        <div className="{styles.hello}">
+          Hello World!
+        </div>
+    );
 }
-
-export default App;
 ```
 
 However, this will not work because every time `App` rerenders, `items` will be
@@ -150,7 +134,7 @@ reset to the empty array. To achieve what we want to do here we need to
 introduce the concept of hooks. Hooks are a way to "attach" additional behavior
 to a component. There are a multitude of default hooks provided in React but
 the ones you will use most often likely will be `useState`, `useEffect`,
-`useRef` and `useMemo`. The real power behind hooks is that you can build your
+and `useRef`. The real power behind hooks is that you can build your
 own hooks out of the basic hooks which provides a powerful level of abstraction.
 When naming hooks, it is convention to prefix them with "use". Now, back to
 our issue here. We want to retain the value of `items` every time `App`
@@ -158,87 +142,62 @@ rerenders. This can be achieved with the `useState` hook, as follows:
 
 
 ```jsx
-// src/App.js
-import "./App.css";
+'use client'
 
-function App() {
-  const [items, setItems] = useState([]);
+import  React, { useState, useEffect } from 'react';
+import styles from './page.module.css'
 
-  return (
-    <div className="App">
-      Hello There
-    </div>
-  );
+export default function Home() {
+    const [items, setItems] = useState([]);
+    
+    return (
+        <div className="{styles.hello}">
+          Hello World!
+        </div>
+    );
 }
-
-export default App;
 ```
 
 The `useState` hook takes in an initial value as a parameter and returns a
 2-element array (i.e. a tuple) where the first element is the value of the
 state and the second element is a function that we can call to update the
 state. Note, you MUST set the value using the function. The reason we can't set
-the value manually (e.x. `items = [...items, {id: "foo", content: "bar"}])`
-or `items.push({id: "foo", content: "bar"})` is because React will not see
+the value manually (e.x. `items = [...items, {_id: "foo", content: "bar"}])`
+or `items.push({_id: "foo", content: "bar"})` is because React will not see
 that `items` is changed and update any components that rely on it reactively.
 
-Another thing to note is that we also imported a CSS file at the top of `App`.
-This will include the stylesheet for the App component into our site. 
-We won't go over it too much here but in general, we keep styles that pertain
-to the given component in this file. However, the biggest thing to note with
-this is that our CSS is not actually scoped to *only* the component but rather
-is imported **globally**, so you must be careful with having common selectors
-because they can inadvertently affect styles of other components if not designed
-properly. A common naming scheme to ensure no CSS conflicts occur is to use the
-[BEM (Block Element Modifier)](http://getbem.com/) naming convention.
-
-We now will define some simple functions that allow us to easily create and
-delete items:
+Now we can use `useEffect` to fetch our items and rerender the UI:
 
 ```jsx
-// src/App.js
-import { useState } from "react";
+'use client'
 
-function App() {
-  const [items, setItems] = useState([]);
+import  React, { useState, useEffect } from 'react';
+import styles from './page.module.css'
 
-  const createItem = (content) => {
-    const newItem = {
-      id: `item-${items.length}`,
-      content, // Tip: shortcut for writing "content: content"
-    };
-    // The "..." is called the "spread operator"
-    setItems(() => [...items, newItem]);
-  };
-
-  const deleteItem = (itemIdx) => {
-    setItems(() => {
-      // This little trick makes a new shallow copy of the items array
-      const newItems = [...items];
-      newItems.splice(itemIdx, 1);
-      return newItems;
-    });
-  };
-
-  return (
-    <div className="App">
-      Hello There
-    </div>
-  );
+export default function Home() {
+    const [items, setItems] = useState([]);
+    
+    useEffect(() => {
+        getItems().then(setItems);
+    }, [])
+    
+    return (
+        <div className="{styles.hello}">
+          Hello World!
+        </div>
+    );
 }
-
-export default App;
 ```
 
 ### AddItemForm
 
-Now that we have our `App` component roughed in, we want to start to design
+Now that we have our landing page roughed in, we want to start to design
 the sub-components. Firstly, lets implement the `AddItemForm` component.
 This component handles the form that allows us to create new todo items.
 Let's start by rouging in the basic boilerplate for the component:
 
 ```jsx
-// src/components/AddItemForm.js
+// components/AddItemForm/AddItemForm.js
 import "./AddItemForm.css";
 
 export function AddItemForm() {
@@ -246,72 +205,54 @@ export function AddItemForm() {
 }
 ```
 
-We then can use this newly created component within `App` itself:
+We then can use this newly created component within our landing page itself:
 
 ```jsx
-// src/App.js
-import { useState } from "react";
-// Note: when importing .js files we do not need to include the extension
-import { AddItemForm } from "./components/AddItemForm";
-
-function App() {
+function Home() {
   const [items, setItems] = useState([]);
 
   // ...
 
   return (
-    <div className="App">
+    <>
       <AddItemForm />
-    </div>
+    </>
   );
 }
-
-export default App;
 ```
 
-In `App` we have the `createItem` that allows us to easily create new items
+In our landing page, we have the `addItem` that allows us to easily create new items
 in our `items` state. It would be useful if our `AddItemForm` component had
 access to this function somehow. This is where props come in. Props allow us to
 pass in references to values from our parent component to children components.
 Props are accessed in the first parameter of the component function.
 
 ```jsx
-// src/components/AddItemForm.js
+// components/AddItemForm/AddItemForm.js
 import "./AddItemForm.css";
 
 export function AddItemForm(props) {
-  const { createItem } = props; // Tip: this syntax is called "object destructuring"
+  const { addItem } = props; // Tip: this syntax is called "object destructuring"
 
   return (<div>TODO: make the form</div>);
 }
 ```
 
-We then can update `App` to pass a reference to `createItem` to `AddItemForm`
+We then can update our landing page to pass a reference to `addItem` to `AddItemForm`
 
 ```jsx
-// src/App.js
-import { useState } from "react";
-import { AddItemForm } from "./components/AddItemForm";
-
-function App() {
-  const [items, setItems] = useState([]);
-
-  // ...
-
   return (
-    <div className="App">
-      <AddItemForm createItem={createItem} />
-    </div>
+    <>
+      <AddItemForm addItem={addItem} />
+    </>
   );
 }
-
-export default App;
 ```
 
 Now we will port in a modified version of the HTML code in the original app.
 
 ```jsx
-// src/components/AddItemForm.js
+// components/AddItemForm/AddItemForm.js
 import "./AddItemForm.css";
 
 export function AddItemForm(props) {
@@ -354,7 +295,7 @@ it to an HTML element by using the `ref` attribute. Implementing this into
 `AddItemForm` gives us the following:
 
 ```jsx
-// src/components/AddItemForm.js
+// components/AddItemForm/AddItemForm.js
 import "./AddItemForm.css";
 
 export function AddItemForm(props) {
@@ -417,15 +358,15 @@ export function Items(props) {
 }
 ```
 
-In `App` we use `Items` as such:
+In our landing page, we use `Items` as such:
 
 ```jsx
 // src/App.js
-import { useState } from "react";
-import { AddItemForm } from "./components/AddItemForm";
-import { Items } from "./components/Items";
 
-function App() {
+// ...
+import { Items } from "./components/Items/Item";
+
+function Home() {
   const [items, setItems] = useState([]);
 
   // ...
@@ -437,8 +378,6 @@ function App() {
     </div>
   );
 }
-
-export default App;
 ```
 
 Ignoring, `deleteItems` and the `Item` component for now, let's just quickly
@@ -449,15 +388,8 @@ of them in the DOM. One important thing to note is that when rendering lists
 we must provide a unique `key` attribute for each item. This helps React keep
 track of which item is which.
 
-**Note**: When assigning the value for `key`, using the index of the item (`_idx`)
-is not recommended, and another unique property, such as the item's id (if possible)
-should be used instead. The index should only be used when there are no other options.
-Look at the [React docs](https://reactjs.org/docs/lists-and-keys.html#keys), and the 
-[ESLint rule](https://github.com/jsx-eslint/eslint-plugin-react/blob/master/docs/rules/no-array-index-key.md)
-for more information.
-
 ```jsx
-// components/Items.js
+// components/Items/Items.js
 import "./Items.css";
 
 export function Items(props) {
@@ -465,8 +397,8 @@ export function Items(props) {
 
   return (
     <div className="Items">
-      {items.map((item, _idx) => (
-        <div key={item.id}>{item.content}</div>
+      {items.map((item) => (
+        <div key={item._id}>{item.content}</div>
       ))}
     </div>
   );
@@ -489,7 +421,7 @@ export function Items(props) {
         <h2>No items added yet, try adding some.</h2>
       ) : (
         items.map((item) => (
-          <div key={item.id}>{item.content}</div>
+          <div key={item._id}>{item.content}</div>
         ))
       )}
     </div>
@@ -502,16 +434,16 @@ todo item that it needs to display as well as a function that it can call
 to delete this todo item. The component for this will look like the following:
 
 ```jsx
-// components/Item.js
+// components/Item/Item.js
 import "./Item.css";
 
 export function Item(props) {
-  const { item, deleteThisItem } = props;
+  const { item, deleteItem } = props;
 
   return (
     <div className="Item">
       <div className="Item__content">{item.content}</div>
-      <div className="Item__delete-icon" onClick={deleteThisItem}></div>
+      <div className="Item__delete-icon" onClick={deleteItem}></div>
     </div>
   );
 }
@@ -535,9 +467,9 @@ export function Items(props) {
       ) : (
         items.map((item, idx) => (
           <Item
-            key={item.id}
+            key={item._id}
             item={item}
-            deleteThisItem={() => deleteItem(idx)}
+            deleteItem={deleteItem}
           />
         ))
       )}
@@ -545,148 +477,3 @@ export function Items(props) {
   );
 }
 ```
-
-One thing to note is how we handled setting up the function to pass into
-`Item`'s `deleteThisItem` prop. Since `deleteItem` takes the index of the
-item we want to delete but `deleteThisItem` does not, we define a new function
-that when called will delete the todo item that it was currently on.
-
-## Adding Local Storage
-
-At this point, the todo app is fully functional. However, our todo items are
-only stored in memory and are not persisted to local storage. As such let us
-define two helper functions to load and save todo items to local storage:
-
-```jsx
-// src/App.js
-import { useState } from "react";
-import { AddItemForm } from "./components/AddItemForm";
-import { Items } from "./components/Items";
-
-const ITEMS_STORAGE_KEY = "todo";
-
-// Note: we do not need to define these functions within the `App` component
-// because they are purely vanilla JavaScript and do not use any React specific 
-// features
-const loadItems = () => {
-  const itemDataRaw = localStorage.getItem(ITEMS_STORAGE_KEY);
-  const itemData = itemDataRaw ? JSON.parse(itemDataRaw) : [];
-  return itemData;
-};
-
-const saveItems = (items) => {
-  localStorage.setItem(ITEMS_STORAGE_KEY, JSON.stringify(items));
-};
-
-function App() {
-  // Here we initially populate items by loading the todo items from local storage
-  const [items, setItems] = useState(loadItems());
-
-  const createItem = (content) => {
-    const newItem = {
-      id: `item-${items.length}`,
-      content,
-    };
-    setItems(() => [...items, newItem]);
-  };
-
-  const deleteItem = (itemIdx) => {
-    setItems(() => {
-      const newItems = [...items];
-      newItems.splice(itemIdx, 1);
-      return newItems;
-    });
-  };
-
-  return (
-    <div className="App">
-      <AddItemForm createItem={createItem} />
-      <Items items={items} deleteItem={deleteItem} />
-    </div>
-  );
-}
-
-export default App;
-```
-
-Now you may have noticed that we have not used `saveItems` anywhere yet. The
-most intuitive place that you would expect to call this function would be
-anywhere we change `items` (i.e. in any call to `setItems`). This would 100%
-work, however, there is a element of maintainability here where as our app
-grows, we will constantly have to add new calls to `saveItems` in every single
-place that updates `items`. This can easily get out of hand and cause bugs when
-you inevitably forget one spot.
-
-To avoid this maintainability headache, let's introduce the `useEffect` hook.
-This hook by far is one of the most confusing to learn initially but it is by
-far one of the most powerful hooks in React. In essence, this hook allows you to
-perform "side effects". The "side effect" that we want to do is to save
-`items` to local storage every time it changes. At the very basic level,
-`useEffect` takes in two parameters, a function and an array of dependencies.
-Every time one of the dependencies in the array changes, the function will
-be run. As such let's look how we'd use `useEffect` in `App` to save the `items`
-state to local storage:
-
-```jsx
-// src/App.js
-import { useState, useEffect } from "react";
-import { AddItemForm } from "./components/AddItemForm";
-import { Items } from "./components/Items";
-
-const ITEMS_STORAGE_KEY = "todo";
-
-const loadItems = () => {
-  const itemDataRaw = localStorage.getItem(ITEMS_STORAGE_KEY);
-  const itemData = itemDataRaw ? JSON.parse(itemDataRaw) : [];
-  return itemData;
-};
-
-const saveItems = (items) => {
-  localStorage.setItem(ITEMS_STORAGE_KEY, JSON.stringify(items));
-};
-
-function App() {
-  const [items, setItems] = useState(loadItems());
-
-  // Here our dependency array only contains `items`. As such the function
-  // passed in will be called every time `items` changes.
-  useEffect(() => {
-    saveItems(items);
-  }, [items]);
-
-  const createItem = (content) => {
-    const newItem = {
-      id: `item-${items.length}`,
-      content, 
-    };
-    setItems(() => [...items, newItem]);
-  };
-
-  const deleteItem = (itemIdx) => {
-    setItems(() => {
-      const newItems = [...items];
-      newItems.splice(itemIdx, 1);
-      return newItems;
-    });
-  };
-
-  return (
-    <div className="App">
-      <AddItemForm createItem={createItem} />
-      <Items items={items} deleteItem={deleteItem} />
-    </div>
-  );
-}
-
-export default App;
-```
-
-There are plenty of more tricks you can do with `useEffect`. For example, if
-you return a function in the passed in function, that returned function will
-be called once the component is unmounted (useful for setting up and cleaning up
-subscriptions). Additionally, if the dependency array is empty, the passed in
-function will only be called once when the component is mounted. Furthermore,
-if no dependency array is passed in, then the passed in function will be run
-every time the component renders.
-
-And thats it, we have successfully converted the todo app to use React!
