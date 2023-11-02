@@ -1,6 +1,5 @@
 function send(method, url, data){
-    console.log(method, url, data)
-    return fetch(`http://localhost:4000${url}`, {
+    return fetch(`${process.env.NEXT_PUBLIC_BACKEND}${url}`, {
         method: method,
         headers: {"Content-Type": "application/json"},
         body: (data)? JSON.stringify(data): null,

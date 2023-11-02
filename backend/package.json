@@ -4,13 +4,13 @@
   "description": "",
   "main": "app.mjs",
   "scripts": {
-    "prod": "node app.mjs",
-    "dev": "nodemon app.mjs",
-    "test": "npx mocha"
+    "prod": "env-cmd node app.mjs",
+    "dev": "env-cmd nodemon app.mjs"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "env-cmd": "^10.1.0",
     "express": "^4.18.2",
     "nedb": "^1.8.0"
   },

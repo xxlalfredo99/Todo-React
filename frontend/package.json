@@ -3,14 +3,19 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
+    "dev": "env-cmd next dev",
+    "build": "env-cmd next build",
+    "start": "env-cmd next start",
     "lint": "next lint"
   },
   "dependencies": {
+    "env-cmd": "^10.1.0",
+    "next": "14.0.0",
     "react": "^18",
-    "react-dom": "^18",
-    "next": "14.0.0"
+    "react-dom": "^18"
+  },
+  "devDependencies": {
+    "eslint": "8.52.0",
+    "eslint-config-next": "14.0.1"
   }
 }
