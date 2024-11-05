@@ -1,5 +1,5 @@
 function send(method, url, data){
-    return fetch(`${process.env.NEXT_PUBLIC_BACKEND}${url}`, {
+    return fetch(`${process.env.DOCKER_BACKEND}${url}`, {
         method: method,
         headers: {"Content-Type": "application/json"},
         body: (data)? JSON.stringify(data): null,
