@@ -6,8 +6,15 @@ import Datastore from "nedb";
 
 const PORT = 4000;
 const app = express();
+const cors = require('cors');
 
 app.use(express.json());
+
+app.use(cors({
+  origin: '34.130.147.30',
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  credentials: true
+}));
 
 const items = new Datastore({
   filename: join("db", "items.db"),
@@ -50,7 +57,7 @@ function deleteItem(_id){
 }
 
 app.use(function (req, res, next) {
-  res.header("Access-Control-Allow-Origin", process.env.FRONTEND || "http://34.130.147.30:80:3000");
+  res.header("Access-Control-Allow-Origin", process.env.FRONTEND || process.env.DOCKER_FRONTEND);
   res.header("Access-Control-Allow-Headers", "Content-Type");
   res.header("Access-Control-Allow-Methods", "*");
   next();

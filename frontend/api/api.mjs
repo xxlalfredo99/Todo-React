@@ -1,5 +1,5 @@
 function send(method, url, data){
-    return fetch(`http://34.130.49.194:8080:4000${url}`, {
+    return fetch(`${process.env.DOCKER_BACKEND}${url}`, {
         method: method,
         headers: {"Content-Type": "application/json"},
         body: (data)? JSON.stringify(data): null,
