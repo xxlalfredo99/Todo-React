@@ -50,7 +50,7 @@ function deleteItem(_id){
 }
 
 app.use(function (req, res, next) {
-  res.header("Access-Control-Allow-Origin", process.env.FRONTEND || "http://34.130.49.194:80");
+  res.header("Access-Control-Allow-Origin", process.env.FRONTEND || "http://34.130.147.30:80:3000");
   res.header("Access-Control-Allow-Headers", "Content-Type");
   res.header("Access-Control-Allow-Methods", "*");
   next();
